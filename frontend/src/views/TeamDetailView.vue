@@ -269,14 +269,20 @@ async function saveAssignments() {
   showToast({ title: '分工已更新', variant: 'success' })
 }
 
+const processingAppId = ref('')
+
 async function handleApprove(app: JoinApplication) {
+  if (processingAppId.value) return
+  processingAppId.value = app.id
   try {
     await tasksApi.approveJoin(taskId.value, app.id, { duty: app.role })
-    app.status = 'approved'
-    await loadData()
+    // app.status = 'approved'
+    await loadData() // 重新拉取，状态自然同步
     showToast({ title: `已通过 ${app.name || app.role} 的加入申请`, variant: 'success' })
-  } catch {
-    showToast({ title: '审核失败，请检查网络或权限', variant: 'error' })
+  } catch (err: any) {
+    showToast({ title: err.response?.data?.detail || '审核失败', variant: 'error' })
+  } finally {
+    processingAppId.value = ''
   }
 }
 
