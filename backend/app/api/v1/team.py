@@ -111,15 +111,7 @@ async def post_approve_application(
     if not is_leader and not has_perm:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无审批权限")
 
-    # 加锁查询，防止并发重复审批
-    application = (
-        await db.execute(
-            select(JoinApplication)
-            .where(JoinApplication.id == application_id)
-            .with_for_update()
-        )
-    ).scalar_one_or_none()
-
+    application = await get_application_by_id(db, application_id)
     if not application or application.task_id != task_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="申请不存在")
     if application.status != "pending":
@@ -151,15 +143,7 @@ async def post_reject_application(
     if not is_leader and not has_perm:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无审批权限")
 
-    # 加锁查询，防止并发重复操作
-    application = (
-        await db.execute(
-            select(JoinApplication)
-            .where(JoinApplication.id == application_id)
-            .with_for_update()
-        )
-    ).scalar_one_or_none()
-
+    application = await get_application_by_id(db, application_id)
     if not application or application.task_id != task_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="申请不存在")
     if application.status != "pending":
