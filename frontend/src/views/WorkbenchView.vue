@@ -122,7 +122,7 @@ const roleData: Record<string, any> = {
     tileSummary: '产品经理可管理任务和需求，也保留个人任务/需求入口。',
     metrics: [
       { title: '本月转化率', source: 'stats.conversion_rate', suffix: '%', note: '已转化需求 / 总审核数', tone: 'rgba(0, 215, 34, 0.12)' },
-      { title: '全部进行中工单数', source: 'stats.tasks_in_progress', note: '含招募、开发、验收阶段', tone: 'rgba(20, 110, 245, 0.1)' },
+      { title: '全部进行中工单数', source: 'stats.tasks_active', note: '含招募、开发中、待验收', tone: 'rgba(20, 110, 245, 0.1)' },
       { title: '平台总注册用户数', source: 'stats.users_total', note: '患者/家属 · 志愿者 · 共建者', tone: 'rgba(122, 61, 255, 0.1)' },
     ],
     tiles: ['profile', 'messageCenter', 'taskManage', 'demandManage', 'myTasks', 'myDemands'],

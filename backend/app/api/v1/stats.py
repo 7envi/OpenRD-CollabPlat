@@ -15,6 +15,9 @@ router = APIRouter(tags=["统计"])
 # 需求「已处置」状态集合：用于本月转化率分母
 _DISPOSED_DEMAND_STATUSES = ("converted", "linked", "archived", "closed", "rejected")
 
+# 任务「活跃」状态集合：尚未完成/关闭，即“进行中”涵盖招募、组队就绪、开发、待验收
+_ACTIVE_TASK_STATUSES = ("recruiting", "team_ready", "in_progress", "pending_acceptance")
+
 
 @router.get("/stats", response_model=ApiResponse)
 async def get_platform_stats(db: AsyncSession = Depends(get_db)):
@@ -27,6 +30,12 @@ async def get_platform_stats(db: AsyncSession = Depends(get_db)):
     )).scalar_one()
     tasks_closed = (await db.execute(
         select(func.count()).select_from(Task).where(Task.status == "closed")
+    )).scalar_one()
+    # 全部进行中（活跃）工单数：含招募、组队就绪、开发、待验收，不含已完成/已关闭
+    tasks_active = (await db.execute(
+        select(func.count()).select_from(Task).where(
+            Task.status.in_(_ACTIVE_TASK_STATUSES), Task.is_deleted == 0
+        )
     )).scalar_one()
 
     users_requester = (await db.execute(
@@ -101,6 +110,7 @@ async def get_platform_stats(db: AsyncSession = Depends(get_db)):
         "tasks_in_progress": tasks_in_progress,
         "tasks_completed": tasks_completed,
         "tasks_closed": tasks_closed,
+        "tasks_active": tasks_active,
         "users_requester": users_requester,
         "users_builder": users_builder,
         "users_total": users_total,

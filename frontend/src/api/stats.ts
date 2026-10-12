@@ -5,6 +5,7 @@ export interface PlatformStats {
   tasks_in_progress: number
   tasks_completed: number
   tasks_closed: number
+  tasks_active: number
   users_requester: number
   users_builder: number
   users_total: number

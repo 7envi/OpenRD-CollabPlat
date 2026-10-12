@@ -127,7 +127,7 @@ async def test_platform_stats_is_public(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     for key in (
-        "tasks_total", "tasks_in_progress", "tasks_completed", "tasks_closed",
+        "tasks_total", "tasks_in_progress", "tasks_completed", "tasks_closed", "tasks_active",
         "users_requester", "users_builder", "users_total",
         "demands_total", "tasks_recruiting", "pending_demands",
         "conversion_rate", "dau_today", "demands_7d", "tasks_7d",
